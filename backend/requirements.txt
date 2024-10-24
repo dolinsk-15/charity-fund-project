@@ -1,0 +1,8 @@
+Django>=3.2,<4.0
+djangorestframework
+mysqlclient
+stripe
+twilio
+django-cors-headers
+python-dotenv
+djangorestframework-simplejwt
