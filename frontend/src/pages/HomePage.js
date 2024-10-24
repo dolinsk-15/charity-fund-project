@@ -1,0 +1,378 @@
+// import React, { useState, useEffect } from 'react';
+// import { Button } from '../components/ui/Button';
+// import { Input } from '../components/ui/Input';
+// import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+// import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/Dialog';
+// import { Checkbox } from '../components/ui/Checkbox';
+// import { Progress } from '../components/ui/Progress';
+// import { UserIcon } from 'lucide-react';
+// import axios from 'axios';
+// import { loadStripe } from '../stripe/stripe-js';
+// import { Elements, CardElement, useStripe, useElements } from '../stripe/react-stripe-js';
+
+
+
+
+// const stripePromise = loadStripe('your-publishable-key');
+
+// export default function HomePage() {
+//   const [showProfile, setShowProfile] = useState(false);
+//   const [showCardModal, setShowCardModal] = useState(false);
+//   const [paymentAmount, setPaymentAmount] = useState('');
+//   const [isRecurring, setIsRecurring] = useState(false);
+//   const [progress, setProgress] = useState(0);
+//   const [infoText, setInfoText] = useState('');
+//   const [fundName, setFundName] = useState('');
+//   const [fundGoal, setFundGoal] = useState(0);
+//   const userId = localStorage.getItem('userId');
+//   const accessToken = localStorage.getItem('accessToken');
+
+//   const stripe = useStripe();
+//   const elements = useElements();
+
+//   useEffect(() => {
+//     axios.get('http://localhost:8000/api/admin/fund-settings/')
+//       .then(response => {
+//         setInfoText(response.data.info_text);
+//         setFundName(response.data.fund_name);
+//         setFundGoal(response.data.fund_goal);
+//         const progressPercentage = (response.data.total_raised / response.data.fund_goal) * 100;
+//         setProgress(progressPercentage);
+//       })
+//       .catch(error => {
+//         console.error('Failed to fetch fund settings:', error);
+//       });
+//   }, []);
+
+//   const handlePayment = async (e) => {
+//     e.preventDefault();
+//     setShowCardModal(true);
+//   };
+
+//   const handleCardPayment = async (e) => {
+//     e.preventDefault();
+
+//     if (!stripe || !elements) {
+//       return;
+//     }
+
+//     const cardElement = elements.getElement(CardElement);
+
+//     try {
+//       const { paymentMethod } = await stripe.createPaymentMethod({
+//         type: 'card',
+//         card: cardElement,
+//       });
+
+//       await axios.post('http://localhost:8000/api/payments/process/', {
+//         user_id: userId,
+//         amount: paymentAmount,
+//         payment_method_id: paymentMethod.id,
+//         is_recurring: isRecurring,
+//       }, {
+//         headers: {
+//           Authorization: `Bearer ${accessToken}`,
+//         },
+//       });
+
+//       alert('Payment successful!');
+//       setShowCardModal(false);
+//     } catch (error) {
+//       console.error('Payment failed:', error);
+//       alert('Payment failed.');
+//     }
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gray-100">
+//       <header className="bg-white shadow-sm">
+//         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+//           <h1 className="text-2xl font-bold">Charity Fund</h1>
+//           <Button variant="ghost" onClick={() => setShowProfile(true)}>
+//             <UserIcon className="h-6 w-6" />
+//           </Button>
+//         </div>
+//       </header>
+
+//       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+//         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Make a Payment</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <form onSubmit={handlePayment} className="space-y-4">
+//                 <Input
+//                   type="number"
+//                   placeholder="Amount"
+//                   value={paymentAmount}
+//                   onChange={(e) => setPaymentAmount(e.target.value)}
+//                   required
+//                 />
+//                 <div className="flex items-center space-x-2">
+//                   <Checkbox
+//                     id="recurring"
+//                     checked={isRecurring}
+//                     onCheckedChange={(checked) => setIsRecurring(checked)}
+//                   />
+//                   <label htmlFor="recurring">Set up recurring payment</label>
+//                 </div>
+//                 <Button type="submit" className="w-full">Pay</Button>
+//               </form>
+//             </CardContent>
+//           </Card>
+
+//           <Card>
+//             <CardHeader>
+//               <CardTitle>Information</CardTitle>
+//             </CardHeader>
+//             <CardContent>
+//               <p>{infoText}</p>
+//             </CardContent>
+//           </Card>
+//         </div>
+
+//         <Card className="mt-8">
+//           <CardHeader>
+//             <CardTitle>{fundName}</CardTitle>
+//           </CardHeader>
+//           <CardContent>
+//             <Progress value={progress} className="w-full" />
+//             <p className="mt-2 text-center">{progress.toFixed(2)}% of the target amount raised</p>
+//           </CardContent>
+//         </Card>
+//       </main>
+
+//       <Dialog open={showProfile} onOpenChange={setShowProfile}>
+//         <DialogContent>
+//           <DialogHeader>
+//             <DialogTitle>Profile</DialogTitle>
+//           </DialogHeader>
+//           <div className="space-y-4">
+//             <Button className="w-full">Change Phone Number</Button>
+//             <Button className="w-full">Change Payment Details</Button>
+//             <Button variant="destructive" className="w-full">Delete Account</Button>
+//           </div>
+//         </DialogContent>
+//       </Dialog>
+
+//       <Dialog open={showCardModal} onOpenChange={setShowCardModal}>
+//         <DialogContent>
+//           <DialogHeader>
+//             <DialogTitle>Link Card</DialogTitle>
+//           </DialogHeader>
+//           <form onSubmit={handleCardPayment} className="space-y-4">
+//             <CardElement options={{ hidePostalCode: true }} />
+//             <Button type="submit" className="w-full">Link and Pay</Button>
+//           </form>
+//         </DialogContent>
+//       </Dialog>
+//     </div>
+//   );
+// }
+
+// // Wrap HomePage with Elements for Stripe
+
+
+
+// export function HomePageWrapper() {
+//   return (
+//     <Elements stripe={stripePromise}>
+//       <HomePage />
+//     </Elements>
+//   );
+// }
+
+
+//////////////////////////////////////////////////////////
+
+
+
+
+import React, { useState, useEffect } from 'react';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/Dialog';
+import { Checkbox } from '../components/ui/Checkbox';
+import { Progress } from '../components/ui/Progress';
+import { UserIcon } from 'lucide-react';
+import axios from 'axios';
+// import { loadStripe } from '../stripe/stripe-js';
+// import { Elements, CardElement, useStripe, useElements } from '../stripe/react-stripe-js';
+
+// const stripePromise = loadStripe('your-publishable-key');
+
+export default function HomePage() {
+  const [showProfile, setShowProfile] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [paymentAmount, setPaymentAmount] = useState('');
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [infoText, setInfoText] = useState('');
+  const [fundName, setFundName] = useState('');
+  const [fundGoal, setFundGoal] = useState(0);
+  const userId = localStorage.getItem('userId');
+  const accessToken = localStorage.getItem('accessToken');
+
+  // const stripe = useStripe();
+  // const elements = useElements();
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/admin/fund-settings/')
+      .then(response => {
+        setInfoText(response.data.info_text);
+        setFundName(response.data.fund_name);
+        setFundGoal(response.data.fund_goal);
+        const progressPercentage = (response.data.total_raised / response.data.fund_goal) * 100;
+        setProgress(progressPercentage);
+      })
+      .catch(error => {
+        console.error('Failed to fetch fund settings:', error);
+      });
+  }, []);
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    setShowCardModal(true);
+  };
+
+  // Закомментированный код обработки платежа с помощью карты
+  /*
+  const handleCardPayment = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+
+    try {
+      const { paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+      });
+
+      await axios.post('http://localhost:8000/api/payments/process/', {
+        user_id: userId,
+        amount: paymentAmount,
+        payment_method_id: paymentMethod.id,
+        is_recurring: isRecurring,
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      alert('Payment successful!');
+      setShowCardModal(false);
+    } catch (error) {
+      console.error('Payment failed:', error);
+      alert('Payment failed.');
+    }
+  };
+  */
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Charity Fund</h1>
+          <Button variant="ghost" onClick={() => setShowProfile(true)}>
+            <UserIcon className="h-6 w-6" />
+          </Button>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Make a Payment</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePayment} className="space-y-4">
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  value={paymentAmount}
+                  onChange={(e) => setPaymentAmount(e.target.value)}
+                  required
+                />
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="recurring"
+                    checked={isRecurring}
+                    onCheckedChange={(checked) => setIsRecurring(checked)}
+                  />
+                  <label htmlFor="recurring">Set up recurring payment</label>
+                </div>
+                <Button type="submit" className="w-full">Pay</Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Information</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{infoText}</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>{fundName}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Progress value={progress} className="w-full" />
+            <p className="mt-2 text-center">{progress.toFixed(2)}% of the target amount raised</p>
+          </CardContent>
+        </Card>
+      </main>
+
+      <Dialog open={showProfile} onOpenChange={setShowProfile}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Profile</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Button className="w-full">Change Phone Number</Button>
+            <Button className="w-full">Change Payment Details</Button>
+            <Button variant="destructive" className="w-full">Delete Account</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Закомментированный код для привязки карты */}
+      {/*
+      <Dialog open={showCardModal} onOpenChange={setShowCardModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Link Card</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCardPayment} className="space-y-4">
+            <CardElement options={{ hidePostalCode: true }} />
+            <Button type="submit" className="w-full">Link and Pay</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+      */}
+    </div>
+  );
+}
+
+// Закомментированный код обертки HomePage с элементами Stripe
+/*
+export function HomePageWrapper() {
+  return (
+    <Elements stripe={stripePromise}>
+      <HomePage />
+    </Elements>
+  );
+}
+*/
+
